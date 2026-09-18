@@ -1,6 +1,6 @@
 from flask import Blueprint, send_file
-from app.pdf.generador_pdf import generar_pdf_prueba, generar_pdf_financiero
-from app.services.reporte_service import obtener_datos_financieros
+from app.pdf.generador_pdf import generar_pdf_prueba, generar_pdf_financiero, generar_pdf_concurrencia
+from app.services.reporte_service import obtener_datos_financieros, obtener_datos_concurrencia
 
 reporte_bp = Blueprint('reporte', __name__)
 
@@ -13,4 +13,10 @@ def reporte_prueba():
 def reporte_financiero():
     datos = obtener_datos_financieros()
     ruta = generar_pdf_financiero(datos)
+    return send_file(ruta, as_attachment=True)
+
+@reporte_bp.route('/concurrencia', methods=['GET'])
+def reporte_concurrencia():
+    datos = obtener_datos_concurrencia()
+    ruta = generar_pdf_concurrencia(datos)
     return send_file(ruta, as_attachment=True)

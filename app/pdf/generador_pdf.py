@@ -44,3 +44,39 @@ def generar_pdf_financiero(datos):
     elementos.append(tabla)
     doc.build(elementos)
     return ruta
+
+def generar_pdf_concurrencia(datos):
+    ruta = os.path.join("output", "reporte_concurrencia.pdf")
+    doc = SimpleDocTemplate(ruta, pagesize=letter)
+    estilos = getSampleStyleSheet()
+    elementos = []
+
+    elementos.append(Paragraph("Ponte Bella - Reporte de Concurrencia", estilos['Title']))
+    elementos.append(Spacer(1, 20))
+
+    tabla_datos = [["Servicio", "Cantidad", "Valor"]]
+
+    suma_total = 0
+    for item in datos:
+        servicio = item["servicio"] if item["servicio"] else "Sin especificar"
+        valor = item.get("valor_total", 0)
+        suma_total += valor
+        tabla_datos.append([servicio, str(item["cantidad"]), f"${valor:,}"])
+
+    # Fila final con el total general
+    tabla_datos.append(["", "Total", f"${suma_total:,}"])
+
+    tabla = Table(tabla_datos, colWidths=[200, 100, 150])
+    tabla.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#4A4A4A")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor("#D9D9D9")),
+    ]))
+
+    elementos.append(tabla)
+    doc.build(elementos)
+    return ruta
